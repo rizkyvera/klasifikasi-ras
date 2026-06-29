@@ -56,6 +56,13 @@ model = load_custom_model(model_path)
 if model is None:
     st.error(f"Model '{model_path}' tidak ditemukan! Pastikan file .pt sudah diletakkan di folder 'model' di samping skrip ini.")
 else:
+    # Ambil daftar ras langsung dari class names model YOLO
+    supported_breeds = [v.replace('_', ' ').title() for k, v in model.names.items()]
+    supported_breeds.sort()
+    
+    with st.expander("Lihat Daftar Ras Kucing dan Anjing yang Didukung"):
+        st.write(", ".join(supported_breeds))
+    
     st.subheader("Unggah Gambar untuk Prediksi")
     uploaded_file = st.file_uploader("Pilih file gambar dari perangkat Anda", type=["jpg", "jpeg", "png"], key="upload_external")
     if uploaded_file is not None:
