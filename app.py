@@ -90,29 +90,30 @@ else:
             st.warning("⚠️ Gambar tidak dikenali sebagai salah satu dari 37 ras hewan yang didukung. Mohon masukkan gambar kucing/anjing yang jelas.")
         else:
             st.success("Analisis Otomatis Selesai!")
-            col1, col2 = st.columns(2)
             
-            with col1:
-                st.metric(label="Hasil Prediksi", value=species)
-                if breed:
-                    st.markdown(f"### Ras: {breed}")
-                st.info(f"Tingkat Kepercayaan (Confidence): {default_conf:.2f}%")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.metric(label="Hasil Prediksi", value=species)
+            if breed:
+                st.markdown(f"### Ras: {breed}")
+            st.info(f"Tingkat Kepercayaan (Confidence): {default_conf:.2f}%")
+        
+        with col2:
+            ground_truth_dir = os.path.join(BASE_DIR, 'ground_truth')
+            gt_image_path = None
+            if os.path.exists(ground_truth_dir):
+                for f in os.listdir(ground_truth_dir):
+                    name, _ = os.path.splitext(f)
+                    if name.lower() == default_label.lower():
+                        gt_image_path = os.path.join(ground_truth_dir, f)
+                        break
             
-            with col2:
-                ground_truth_dir = os.path.join(BASE_DIR, 'ground_truth')
-                gt_image_path = None
-                if os.path.exists(ground_truth_dir):
-                    for f in os.listdir(ground_truth_dir):
-                        name, _ = os.path.splitext(f)
-                        if name.lower() == default_label.lower():
-                            gt_image_path = os.path.join(ground_truth_dir, f)
-                            break
-                
-                if gt_image_path:
-                    st.markdown("#### Pembanding (Ground Truth)")
-                    try:
-                        gt_img = Image.open(gt_image_path).convert("RGB")
-                        st.image(gt_img, caption=f"Contoh {breed}", use_container_width=True)
-                    except Exception as e:
-                        st.error(f"Gagal memuat gambar pembanding: {e}")
+            if gt_image_path:
+                st.markdown("#### Pembanding (Ground Truth)")
+                try:
+                    gt_img = Image.open(gt_image_path).convert("RGB")
+                    st.image(gt_img, caption=f"Contoh {breed}", use_container_width=True)
+                except Exception as e:
+                    st.error(f"Gagal memuat gambar pembanding: {e}")
 
