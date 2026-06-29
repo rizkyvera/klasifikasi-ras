@@ -1,10 +1,7 @@
 import streamlit as st
 from PIL import Image
-import re
-_PIL_IMAGE_OPEN = Image.open
 from ultralytics import YOLO
 import os
-import zipfile
 
 st.set_page_config(page_title="Cat vs Dog Classifier", layout="centered")
 
@@ -99,33 +96,4 @@ else:
         if breed:
             st.markdown(f"### Ras: {breed}")
         st.info(f"Tingkat Kepercayaan (Confidence): {default_conf:.2f}%")
-
-        # Optional: allow manual label override inside an expander
-        with st.expander("Ubah label (opsional)"):
-            # Build candidate list: detected class names if any, otherwise all model class names
-            candidates = []
-            cls_list = result.boxes.cls.tolist() if hasattr(result.boxes, 'cls') else []
-            if len(cls_list) > 0:
-                for ci in cls_list:
-                    name = result.names[int(ci)]
-                    if name not in candidates:
-                        candidates.append(name)
-
-            if not candidates:
-                candidates = [v for k, v in sorted(result.names.items())] if hasattr(result, 'names') else [default_label]
-
-            if default_label in candidates:
-                default_idx = candidates.index(default_label)
-            else:
-                candidates.insert(0, default_label)
-                default_idx = 0
-
-            selected_label = st.selectbox("Pilih/konfirmasi label (ras)", candidates, index=default_idx)
-            if st.button("Gunakan Label Terpilih", key="use_selected_label"):
-                species, breed = _parse_species_and_breed(selected_label)
-                st.success("Analisis Selesai (Manual)!")
-                st.metric(label="Hasil Prediksi", value=species)
-                if breed:
-                    st.markdown(f"### Ras: {breed}")
-                conf_to_show = default_conf if selected_label == default_label else 0.0
-                st.info(f"Tingkat Kepercayaan (Confidence): {conf_to_show:.2f}%")
+
